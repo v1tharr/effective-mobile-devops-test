@@ -1,0 +1,26 @@
+services:
+  backend:
+    build: ./backend
+    container_name: em-backend
+    environment:
+      - BACKEND_PORT=${BACKEND_PORT}
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: em-nginx
+    ports:
+      - "${NGINX_PORT}:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - app-network
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
